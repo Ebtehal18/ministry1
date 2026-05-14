@@ -1,110 +1,202 @@
 /* global React, Icon */
 
 /* =========================================================
-   MEMBERS DIRECTORY
+   MEMBERS DIRECTORY — grid of all committee members
    ========================================================= */
 
-function Avatar({ initials, color }) {
+function MemberCard({ initials, tone, name, role, entity, committees, attendance, decisions, meetings, presence, role_badge }) {
   return (
-    <div style={{
-      width: 44, height: 44, borderRadius: "50%",
-      background: `linear-gradient(135deg, ${color}, ${color}cc)`,
-      color: "#fff",
-      display: "inline-flex", alignItems: "center", justifyContent: "center",
-      fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 700,
-      flexShrink: 0,
-    }}>{initials}</div>
-  );
-}
+    <article className="md-card">
+      <div className="md-card-top">
+        {role_badge && <span className={`pill pill-${role_badge.tone}`}>{role_badge.txt}</span>}
+        <button className="iconbtn iconbtn-sm" style={{ marginInlineStart: "auto" }}>
+          <Icon.More width="14" height="14"/>
+        </button>
+      </div>
+      <div className="md-avatar-wrap">
+        <span className={`avatar-lg ${tone || ""}`}>{initials}</span>
+        <span className={`presence presence-${presence}`}/>
+      </div>
+      <h3 className="md-name">{name}</h3>
+      <div className="md-role">{role}</div>
+      <div className="md-entity"><Icon.Building width="12" height="12"/> {entity}</div>
 
-function MemberCard({ name, title, committees, role, attendance, color }) {
-  const initials = name.split(" ").slice(-2).map(w => w[0]).join("");
-  return (
-    <div className="card" style={{ padding: 22 }}>
-      <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-        <Avatar initials={initials} color={color}/>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 15.5, fontWeight: 700, lineHeight: 1.3 }}>{name}</div>
-          <div style={{ fontSize: 12.5, color: "var(--c-ink-3)", marginTop: 4 }}>{title}</div>
+      <div className="md-committees">
+        <div className="md-com-head">
+          <span className="eyebrow">عضوية</span>
+          <span className="num" style={{ fontSize: 11, color: "var(--c-ink-3)" }}>{committees.length} لجنة</span>
         </div>
-        <button className="iconbtn iconbtn-sm"><Icon.More width="16" height="16"/></button>
+        <div className="md-com-list">
+          {committees.slice(0, 3).map((c, i) => (
+            <span key={i} className="md-com-chip">
+              <span className={`md-com-dot dot-${c.tone}`}/>
+              {c.name}
+              {c.lead && <Icon.Crown width="10" height="10"/>}
+            </span>
+          ))}
+          {committees.length > 3 && <span className="md-com-chip md-com-more">+{committees.length - 3}</span>}
+        </div>
       </div>
 
-      <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
-        {role && <span className="pill pill-burg">{role}</span>}
-        <span className="pill pill-outline"><Icon.Committees width="11" height="11"/> {committees} لجان</span>
-      </div>
-
-      <hr style={{ border: 0, borderTop: "1px dashed var(--c-border)", margin: "16px 0" }}/>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+      <div className="md-stats">
         <div>
-          <div style={{ fontSize: 11, color: "var(--c-ink-3)", marginBottom: 4 }}>معدل الحضور</div>
-          <div style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 700, color: attendance >= 90 ? "var(--c-green)" : attendance >= 75 ? "var(--c-blue)" : "var(--c-amber)" }} className="num">{attendance}%</div>
+          <div className="md-stat-num num">{attendance}%</div>
+          <div className="md-stat-lab">حضور</div>
         </div>
         <div>
-          <div style={{ fontSize: 11, color: "var(--c-ink-3)", marginBottom: 4 }}>الحالة</div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "var(--c-green)", display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <span className="dot" style={{ background: "var(--c-green)" }}/> نشط
-          </div>
+          <div className="md-stat-num num">{meetings}</div>
+          <div className="md-stat-lab">اجتماع</div>
+        </div>
+        <div>
+          <div className="md-stat-num num">{decisions}</div>
+          <div className="md-stat-lab">قرار</div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
 function Members() {
-  const members = [
-    { name: "معالي / خالد بن خليفة آل ثاني", title: "وزير المالية", committees: 4, role: "رئيس لجنة", attendance: 96, color: "#7B1F3D" },
-    { name: "معالي / محمد بن عبدالله الكواري", title: "وزير الاتصالات وتقنية المعلومات", committees: 3, role: "رئيس لجنة", attendance: 92, color: "#0D4261" },
-    { name: "معالي / فهد بن جاسم الكعبي", title: "وزير العدل", committees: 5, role: "رئيس لجنة", attendance: 88, color: "#94783F" },
-    { name: "سعادة / عبدالعزيز السبيعي", title: "النائب الأول لرئيس الوزراء — وزير الداخلية", committees: 2, role: "رئيس لجنة", attendance: 94, color: "#4F1228" },
-    { name: "سعادة / نورة بنت عبدالعزيز الكعبي", title: "وزيرة دولة للتعاون الدولي", committees: 3, role: "عضو", attendance: 90, color: "#9D3158" },
-    { name: "سعادة / ماجد بن محمد المسلم", title: "وزير دولة للشؤون الخارجية", committees: 4, role: "عضو", attendance: 78, color: "#0A3550" },
-    { name: "سعادة / حنان محمد المهندي", title: "وزيرة دولة للأمن الغذائي", committees: 2, role: "عضو", attendance: 85, color: "#B89B5E" },
-    { name: "سعادة / يوسف بن محمد العثمان", title: "وزير العمل", committees: 3, role: "عضو", attendance: 72, color: "#631930" },
-  ];
-
   return (
     <>
-      <div className="grid stats-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: 22 }}>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>إجمالي الأعضاء</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>148</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>عبر 18 لجنة</div>
+      <div className="crumbs">
+        <a>الرئيسية</a>
+        <span className="sep">›</span>
+        <span className="here">الأعضاء</span>
+      </div>
+
+      {/* Header summary */}
+      <div className="md-header surface">
+        <div className="md-header-left">
+          <span className="eyebrow">دليل الأعضاء</span>
+          <h2 className="md-header-title">١٤٢ عضواً عبر ٢٧ لجنة</h2>
+          <p className="md-header-sub">يضم النظام أعضاء من ١٨ جهة حكومية، يشاركون في أعمال اللجان الوزارية الدائمة والمؤقتة.</p>
         </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>رؤساء اللجان</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>18</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>كل لجنة لها رئيس مُعيَّن</div>
-        </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>متوسط الحضور</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6, color: "var(--c-green)" }}>87<span style={{ fontSize: 22 }}>%</span></div>
-          <div style={{ fontSize: 12, color: "var(--c-green)", marginTop: 6, fontWeight: 600 }}>▲ 4% عن الفترة السابقة</div>
-        </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>إضافات هذا الشهر</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>06</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>3 رؤساء و 3 أعضاء</div>
+        <div className="md-header-stats">
+          <div className="md-hs">
+            <div className="num md-hs-num">٢٧</div>
+            <div className="md-hs-lab">رئيس لجنة</div>
+          </div>
+          <div className="md-hs-sep"/>
+          <div className="md-hs">
+            <div className="num md-hs-num">٢٧</div>
+            <div className="md-hs-lab">مقرر</div>
+          </div>
+          <div className="md-hs-sep"/>
+          <div className="md-hs">
+            <div className="num md-hs-num">٨٨</div>
+            <div className="md-hs-lab">عضو</div>
+          </div>
+          <div className="md-hs-sep"/>
+          <div className="md-hs">
+            <div className="num md-hs-num">٩٢٪</div>
+            <div className="md-hs-lab">معدل الحضور</div>
+          </div>
         </div>
       </div>
 
-      <div className="card" style={{ padding: "16px 20px", marginBottom: 20, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <div style={{ flex: 1, display: "flex", gap: 8, alignItems: "center", padding: "8px 16px", background: "var(--c-bg-2)", borderRadius: 999, minWidth: 280 }}>
+      {/* Filters */}
+      <div className="md-toolbar">
+        <div className="md-search">
           <Icon.Search width="16" height="16"/>
-          <input style={{ flex: 1, border: 0, background: "transparent", outline: "none", fontSize: 14, fontFamily: "inherit" }}
-            placeholder="ابحث عن عضو…"/>
+          <input placeholder="ابحث بالاسم أو المنصب أو الجهة..."/>
         </div>
-        <button className="pill pill-burg" style={{ padding: "8px 16px", border: 0, fontWeight: 600 }}>الكل · 148</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>رؤساء · 18</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>أعضاء · 130</button>
-        <button className="btn btn-soft btn-sm"><Icon.Filter width="14" height="14"/> فلاتر</button>
-        <button className="btn btn-primary btn-sm"><Icon.Plus width="14" height="14"/> إضافة عضو</button>
+        <div className="md-chips">
+          {["كل الأعضاء","رئيس لجنة","مقرر","عضو دائم","عضو مؤقت"].map((c, i) => (
+            <button key={c} className={`filter-chip ${i === 0 ? "is-active" : ""}`}>{c}</button>
+          ))}
+        </div>
+        <button className="btn btn-secondary btn-sm">
+          <Icon.Filter width="14" height="14"/> الجهة
+        </button>
+        <button className="btn btn-primary btn-sm" style={{ marginInlineStart: "auto" }}>
+          <Icon.Plus width="14" height="14"/> إضافة عضو
+        </button>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-        {members.map((m, i) => <MemberCard key={i} {...m}/>)}
+      {/* Grid */}
+      <div className="md-grid">
+        <MemberCard initials="خ.خ" tone="" name="د. خالد بن محمد الخليفي"
+          role="رئيس اللجنة المالية العليا" entity="وزارة المالية"
+          presence="online" attendance={97} meetings={42} decisions={68}
+          role_badge={{ tone: "burg", txt: "رئيس" }}
+          committees={[
+            { name: "المالية العليا", tone: "blue", lead: true },
+            { name: "حوكمة المخاطر", tone: "blue" },
+            { name: "الموازنة", tone: "blue" },
+            { name: "الاستثمار", tone: "gold" },
+          ]}/>
+        <MemberCard initials="ر.م" tone="tone-gold" name="د. ريم بنت عبدالله المرّي"
+          role="رئيس لجنة المرأة والطفل" entity="وزارة التنمية الاجتماعية"
+          presence="online" attendance={94} meetings={31} decisions={47}
+          role_badge={{ tone: "burg", txt: "رئيس" }}
+          committees={[
+            { name: "المرأة والطفل", tone: "burg", lead: true },
+            { name: "التنمية الاجتماعية", tone: "blue" },
+          ]}/>
+        <MemberCard initials="ع.س" tone="" name="اللواء عبدالله السويدي"
+          role="رئيس لجنة الأمن الوطني" entity="وزارة الداخلية"
+          presence="busy" attendance={92} meetings={28} decisions={36}
+          role_badge={{ tone: "burg", txt: "رئيس" }}
+          committees={[
+            { name: "الأمن الوطني", tone: "burg", lead: true },
+            { name: "الطوارئ", tone: "burg" },
+          ]}/>
+        <MemberCard initials="م.ع" tone="tone-blue" name="م. محمد بن عيسى العنزي"
+          role="مدير عام الخزانة العامة" entity="وزارة المالية"
+          presence="online" attendance={89} meetings={56} decisions={91}
+          role_badge={{ tone: "blue", txt: "مقرر" }}
+          committees={[
+            { name: "المالية العليا", tone: "blue" },
+            { name: "التحول الرقمي", tone: "blue" },
+            { name: "المشتريات", tone: "blue" },
+            { name: "الاستثمار", tone: "gold" },
+            { name: "الموازنة", tone: "blue" },
+          ]}/>
+        <MemberCard initials="ف.ج" tone="tone-gold" name="د. فاطمة الجابر"
+          role="مستشار قانوني — الديوان الأميري" entity="الديوان الأميري"
+          presence="online" attendance={95} meetings={38} decisions={62}
+          role_badge={{ tone: "blue", txt: "مقرر" }}
+          committees={[
+            { name: "الشؤون القانونية", tone: "burg", lead: true },
+            { name: "حوكمة المخاطر", tone: "blue" },
+            { name: "حماية البيانات", tone: "burg" },
+          ]}/>
+        <MemberCard initials="ع.ع" tone="" name="م. علياء بنت أحمد العمادي"
+          role="رئيس قسم الهوية الرقمية" entity="وزارة الاتصالات"
+          presence="online" attendance={91} meetings={34} decisions={52}
+          committees={[
+            { name: "التحول الرقمي", tone: "blue" },
+            { name: "حماية البيانات", tone: "burg" },
+            { name: "الذكاء الاصطناعي", tone: "blue" },
+          ]}/>
+        <MemberCard initials="س.ع" tone="" name="م. سارة بنت يوسف العذبة"
+          role="مهندس أمن المعلومات" entity="جهاز الأمن السيبراني"
+          presence="busy" attendance={88} meetings={22} decisions={29}
+          committees={[
+            { name: "التحول الرقمي", tone: "blue" },
+            { name: "الأمن السيبراني", tone: "burg" },
+          ]}/>
+        <MemberCard initials="ن.ك" tone="" name="م. ناصر بن جاسم الكواري"
+          role="مدير التخطيط العمراني" entity="وزارة البلدية"
+          presence="offline" attendance={84} meetings={26} decisions={31}
+          committees={[
+            { name: "الإسكان والمدن", tone: "blue", lead: true },
+            { name: "التنمية المستدامة", tone: "blue" },
+          ]}/>
+        <MemberCard initials="أ.ج" tone="tone-blue" name="أ. أحمد بن خليفة الجابر"
+          role="وكيل وزارة الاقتصاد المساعد" entity="وزارة التجارة والصناعة"
+          presence="absent" attendance={71} meetings={19} decisions={24}
+          committees={[
+            { name: "الاستثمار", tone: "gold" },
+            { name: "الاقتصاد", tone: "blue" },
+            { name: "المشتريات", tone: "blue" },
+          ]}/>
+      </div>
+
+      {/* Footer */}
+      <div className="md-footer">
+        <button className="btn btn-soft btn-sm">عرض المزيد ({(133).toLocaleString("ar-EG")} عضواً)</button>
       </div>
     </>
   );

@@ -1,7 +1,7 @@
 /* global React, Icon */
 
 /* =========================================================
-   DASHBOARD — burgundy-led, mobile-inspired softness
+   DASHBOARD — themeBlue-led, burgundy as warm accent
    ========================================================= */
 
 function DashHero() {
@@ -24,6 +24,38 @@ function DashHero() {
       </div>
     </div>);
 
+}
+
+function NewsBar() {
+  const items = [
+    { tag: "قرار أميري", tone: "burg", title: "صدور قرار أميري بإعادة تشكيل لجنة التخطيط الاستراتيجي الوطني", time: "قبل ساعتين" },
+    { tag: "اجتماع طارئ", tone: "blue", title: "دعوة لاجتماع طارئ للجنة الأمن الوطني · غداً ٠٨:٠٠", time: "قبل ٣ ساعات" },
+    { tag: "تقرير", tone: "gold", title: "نشر التقرير الفصلي لأداء اللجان الوزارية للربع الأول ٢٠٢٦", time: "أمس" },
+    { tag: "تعيين", tone: "blue", title: "تعيين سعادة الشيخة موزا الثاني عضواً في لجنة التعليم العالي", time: "قبل يومين" },
+    { tag: "إعلان", tone: "burg", title: "إغلاق باب الترشيح للجنة التحول الأخضر يوم الخميس القادم", time: "قبل ٣ أيام" },
+  ];
+  return (
+    <div className="newsbar">
+      <div className="newsbar-head">
+        <span className="newsbar-pulse"><span/></span>
+        <span className="newsbar-label">آخر المستجدات</span>
+        <span className="newsbar-divider"/>
+      </div>
+      <div className="newsbar-track">
+        <div className="newsbar-rail">
+          {items.concat(items).map((n, i) => (
+            <a key={i} className="news-item">
+              <span className={`news-tag news-tag-${n.tone}`}>{n.tag}</span>
+              <span className="news-title">{n.title}</span>
+              <span className="news-time">{n.time}</span>
+              <span className="news-dot"/>
+            </a>
+          ))}
+        </div>
+      </div>
+      <button className="newsbar-all">عرض الكل <Icon.ChevronStart width="13" height="13"/></button>
+    </div>
+  );
 }
 
 function Stat({ label, value, sub, icon, tone = "burg", trend, trendDir = "up" }) {
@@ -70,7 +102,7 @@ function MeetingRow({ time, title, committee, room, status, online }) {
 
 }
 
-function QuorumBar({ present, total, color = "var(--c-burgundy)" }) {
+function QuorumBar({ present, total, color = "var(--c-blue)" }) {
   const pct = Math.round(present / total * 100);
   return (
     <>
@@ -160,6 +192,7 @@ function Dashboard() {
   return (
     <>
       <DashHero />
+      <NewsBar />
 
       {/* TOP STATS */}
       <div className="grid stats-grid">
@@ -253,7 +286,7 @@ function Dashboard() {
             </header>
             <DecisionStatus decisions={[
             { label: "منفذة", value: 142, color: "var(--c-green)" },
-            { label: "قيد التنفيذ", value: 87, color: "var(--c-burgundy)" },
+            { label: "قيد التنفيذ", value: 87, color: "var(--c-blue)" },
             { label: "متأخرة", value: 14, color: "var(--c-amber)" },
             { label: "مرفوضة", value: 6, color: "var(--c-red)" }]
             } />
@@ -271,13 +304,13 @@ function Dashboard() {
           <a className="see-all">عرض جميع اللجان <Icon.ChevronStart width="14" height="14" /></a>
         </div>
         <div className="grid committees-grid">
-          <CommitteeMini name="اللجنة المالية العليا" type="لجنة دائمة" color="var(--c-burgundy)"
+          <CommitteeMini name="اللجنة المالية العليا" type="لجنة دائمة" color="var(--c-blue)"
           chair="معالي/ خالد بن خليفة" members={12} nextMeeting="غداً · 10:00" />
-          <CommitteeMini name="لجنة التحول الرقمي" type="لجنة استراتيجية" color="var(--c-blue)"
+          <CommitteeMini name="لجنة التحول الرقمي" type="لجنة استراتيجية" color="var(--c-burgundy)"
           chair="معالي/ محمد بن عبدالله" members={9} nextMeeting="الخميس · 14:00" />
           <CommitteeMini name="لجنة الشؤون القانونية" type="لجنة دائمة" color="var(--c-gold-700)"
           chair="معالي/ فهد بن جاسم" members={8} nextMeeting="اليوم · 11:30" />
-          <CommitteeMini name="لجنة الأمن الوطني" type="لجنة سيادية" color="var(--c-burgundy-900)"
+          <CommitteeMini name="لجنة الأمن الوطني" type="لجنة سيادية" color="var(--c-blue-900)"
           chair="سعادة/ عبدالعزيز السبيعي" members={11} nextMeeting="الأحد · 09:00" />
         </div>
       </section>

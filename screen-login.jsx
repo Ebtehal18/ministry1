@@ -33,7 +33,7 @@ function Login() {
       {/* LEFT — ceremonial hero */}
       <div className="login-hero">
         <div className="login-hero-badge">
-          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--c-gold)" }}></span>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff" }}></span>
           دولة قطر · مجلس الوزراء
         </div>
 

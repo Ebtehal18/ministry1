@@ -1,198 +1,279 @@
 /* global React, Icon */
 
 /* =========================================================
-   MEETINGS LIST + REPORTS
+   MEETINGS & REPORTS — calendar + list of all meetings
+   themeBlue-led · burgundy reserved for "live now"
    ========================================================= */
 
-function MeetingsList() {
-  const meetings = [
-    { date: "اليوم", time: "09:00", title: "مراجعة الموازنة التشغيلية للربع الثاني", committee: "اللجنة المالية العليا", room: "قاعة الوزراء — الدور الثالث", status: "live", attendees: 9, total: 12 },
-    { date: "اليوم", time: "11:30", title: "مناقشة مشروع قانون حماية البيانات الشخصية", committee: "لجنة الشؤون القانونية", room: "قاعة (ب) — الديوان الأميري", status: "upcoming", attendees: 0, total: 8 },
-    { date: "اليوم", time: "14:00", title: "متابعة مبادرات التحول الرقمي 2026", committee: "لجنة التحول الرقمي", room: "عن بُعد · Q-Connect", status: "upcoming", attendees: 0, total: 9 },
-    { date: "غداً", time: "10:00", title: "اعتماد خطة الاستجابة للطوارئ الوطنية", committee: "لجنة الأمن الوطني", room: "غرفة العمليات الموحدة", status: "scheduled", attendees: 0, total: 11 },
-    { date: "غداً", time: "13:00", title: "مراجعة لوائح المشتريات الحكومية", committee: "اللجنة المالية العليا", room: "قاعة الوزراء — الدور الثالث", status: "scheduled", attendees: 0, total: 12 },
-    { date: "الخميس", time: "09:30", title: "تقييم أداء مبادرات التوظيف الوطني", committee: "لجنة الموارد البشرية", room: "قاعة (أ) — الديوان الأميري", status: "scheduled", attendees: 0, total: 10 },
-    { date: "الأحد", time: "08:00", title: "اجتماع تنسيقي للجان الفرعية", committee: "اللجنة المالية العليا", room: "قاعة الاجتماعات الموسعة", status: "scheduled", attendees: 0, total: 24 },
-    { date: "أمس", time: "14:30", title: "مراجعة العقود الاستراتيجية للربع الأول", committee: "اللجنة المالية العليا", room: "قاعة الوزراء", status: "closed", attendees: 11, total: 12 },
-    { date: "أمس", time: "10:00", title: "إقرار اللائحة التنفيذية لقانون الاستثمار", committee: "لجنة الشؤون القانونية", room: "قاعة (ب)", status: "closed", attendees: 7, total: 8 },
-  ];
+function MeetingsToolbar({ view, onView, filter, onFilter, count }) {
+  return (
+    <div className="mr-toolbar">
+      <div className="mr-tabs">
+        <button className={`mr-tab ${view === "list" ? "is-active" : ""}`} onClick={() => onView("list")}>
+          <Icon.Tasks width="16" height="16"/> القائمة
+        </button>
+        <button className={`mr-tab ${view === "calendar" ? "is-active" : ""}`} onClick={() => onView("calendar")}>
+          <Icon.Calendar width="16" height="16"/> التقويم
+        </button>
+        <button className={`mr-tab ${view === "archive" ? "is-active" : ""}`} onClick={() => onView("archive")}>
+          <Icon.Documents width="16" height="16"/> أرشيف المحاضر
+        </button>
+      </div>
+      <div className="mr-filters">
+        {[
+          { id: "all", label: "كل الاجتماعات", n: count.all },
+          { id: "upcoming", label: "القادمة", n: count.upcoming },
+          { id: "live", label: "جارية الآن", n: count.live },
+          { id: "closed", label: "منتهية", n: count.closed },
+        ].map(f => (
+          <button key={f.id}
+            className={`filter-chip ${filter === f.id ? "is-active" : ""}`}
+            onClick={() => onFilter(f.id)}>
+            {f.label}
+            <span className="num">{f.n}</span>
+          </button>
+        ))}
+        <button className="filter-chip">
+          <Icon.Filter width="14" height="14"/> فلاتر متقدمة
+        </button>
+        <button className="btn btn-primary btn-sm" style={{ marginInlineStart: "auto" }}>
+          <Icon.Plus width="14" height="14"/> اجتماع جديد
+        </button>
+      </div>
+    </div>
+  );
+}
 
-  const statusMap = {
-    live:      { cls: "pill-burg", txt: "جارٍ الآن", live: true },
-    upcoming:  { cls: "pill-blue", txt: "قادم اليوم" },
-    scheduled: { cls: "pill-gray", txt: "مجدول" },
-    closed:    { cls: "pill-green", txt: "منتهٍ" },
+/* ---------- CALENDAR VIEW ---------- */
+function CalendarMonth() {
+  const days = ["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
+  // Synthetic month: 30 days, starting on Sunday (col 1)
+  const cells = [];
+  for (let i = 0; i < 1; i++) cells.push({ pad: true });
+  for (let d = 1; d <= 30; d++) cells.push({ d });
+  // Pad to 35
+  while (cells.length < 35) cells.push({ pad: true });
+
+  const events = {
+    3:  [{ tone: "blue", time: "09:00", title: "اللجنة المالية" }],
+    7:  [{ tone: "blue", time: "10:30", title: "التحول الرقمي" }, { tone: "gold", time: "14:00", title: "الشؤون القانونية" }],
+    10: [{ tone: "burg", time: "11:00", title: "الأمن الوطني — جلسة طارئة" }],
+    12: [{ tone: "blue", time: "09:00", title: "اللجنة المالية" }, { tone: "blue", time: "13:00", title: "المشتريات" }],
+    14: [{ tone: "gold", time: "10:00", title: "المرأة والطفل" }],
+    17: [{ tone: "blue", time: "09:00", title: "التحول الرقمي" }, { tone: "burg", time: "16:30", title: "الطوارئ" }, { tone: "blue", time: "11:00", title: "+2 أخرى" }],
+    21: [{ tone: "blue", time: "10:00", title: "الموازنة Q3" }],
+    23: [{ tone: "gold", time: "14:00", title: "الشؤون القانونية" }],
+    25: [{ tone: "blue", time: "09:30", title: "المالية العليا" }, { tone: "blue", time: "13:00", title: "الإسكان" }],
+    28: [{ tone: "blue", time: "11:00", title: "الديوان الأميري" }],
   };
 
   return (
-    <>
-      <div className="grid stats-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: 22 }}>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>اجتماعات اليوم</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>04</div>
-          <div style={{ fontSize: 12, color: "var(--c-burgundy)", marginTop: 6, fontWeight: 600 }}>1 جارٍ الآن · 3 قادمة</div>
+    <div className="cal-wrap">
+      <header className="cal-head">
+        <div>
+          <span className="eyebrow">مايو 2026</span>
+          <h2 className="cal-title">اجتماعات الشهر</h2>
         </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>هذا الأسبوع</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>12</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>4 لجان مختلفة</div>
+        <div className="cal-nav">
+          <button className="iconbtn iconbtn-sm"><Icon.ChevronStart width="16" height="16"/></button>
+          <button className="btn btn-soft btn-sm">اليوم</button>
+          <button className="iconbtn iconbtn-sm"><Icon.ChevronStart width="16" height="16" style={{ transform: "rotate(180deg)" }}/></button>
         </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>هذا الشهر</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>34</div>
-          <div style={{ fontSize: 12, color: "var(--c-green)", marginTop: 6, fontWeight: 600 }}>▲ 21% عن الشهر الماضي</div>
-        </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>متوسط النصاب</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6, color: "var(--c-green)" }}>91<span style={{ fontSize: 22 }}>%</span></div>
-          <div style={{ fontSize: 12, color: "var(--c-green)", marginTop: 6, fontWeight: 600 }}>أعلى من الحد الأدنى</div>
-        </div>
+      </header>
+      <div className="cal-grid-head">
+        {days.map(d => <div key={d} className="cal-day-name">{d}</div>)}
       </div>
-
-      <div className="card" style={{ padding: "16px 20px", marginBottom: 20, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <div style={{ flex: 1, display: "flex", gap: 8, alignItems: "center", padding: "8px 16px", background: "var(--c-bg-2)", borderRadius: 999, minWidth: 280 }}>
-          <Icon.Search width="16" height="16"/>
-          <input style={{ flex: 1, border: 0, background: "transparent", outline: "none", fontSize: 14, fontFamily: "inherit" }}
-            placeholder="ابحث في الاجتماعات…"/>
-        </div>
-        <button className="pill pill-burg" style={{ padding: "8px 16px", border: 0, fontWeight: 600 }}>الكل</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>اليوم</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>هذا الأسبوع</button>
-        <button className="btn btn-soft btn-sm"><Icon.Calendar width="14" height="14"/> التقويم</button>
-        <button className="btn btn-primary btn-sm"><Icon.Plus width="14" height="14"/> اجتماع جديد</button>
+      <div className="cal-grid">
+        {cells.map((c, i) => {
+          if (c.pad) return <div key={i} className="cal-cell cal-pad"/>;
+          const isToday = c.d === 12;
+          const evs = events[c.d] || [];
+          return (
+            <div key={i} className={`cal-cell ${isToday ? "is-today" : ""}`}>
+              <div className="cal-num num">{c.d}</div>
+              <div className="cal-events">
+                {evs.map((e, j) => (
+                  <div key={j} className={`cal-event tone-${e.tone}`}>
+                    <span className="num">{e.time}</span>
+                    <span className="cal-event-title">{e.title}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
-
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <table className="gov-table">
-          <thead>
-            <tr>
-              <th style={{ width: 110 }}>التاريخ</th>
-              <th style={{ width: 80 }}>الوقت</th>
-              <th>عنوان الاجتماع</th>
-              <th style={{ width: 220 }}>اللجنة</th>
-              <th style={{ width: 240 }}>المكان</th>
-              <th style={{ width: 110 }}>الحضور</th>
-              <th style={{ width: 130 }}>الحالة</th>
-              <th style={{ width: 50 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {meetings.map((m, i) => {
-              const s = statusMap[m.status];
-              return (
-                <tr key={i}>
-                  <td style={{ fontWeight: 600 }}>{m.date}</td>
-                  <td className="num" style={{ fontWeight: 700, color: "var(--c-burgundy)" }}>{m.time}</td>
-                  <td style={{ fontWeight: 600, maxWidth: 360 }}>{m.title}</td>
-                  <td style={{ fontSize: 13, color: "var(--c-ink-2)" }}>{m.committee}</td>
-                  <td style={{ fontSize: 13, color: "var(--c-ink-3)" }}>{m.room}</td>
-                  <td className="num" style={{ fontSize: 13 }}>{m.attendees > 0 ? `${m.attendees}/${m.total}` : `— /${m.total}`}</td>
-                  <td><span className={`pill ${s.cls}`}>{s.live && <span className="dot dot-live"/>}{s.txt}</span></td>
-                  <td><button className="iconbtn iconbtn-sm"><Icon.More width="16" height="16"/></button></td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </>
+    </div>
   );
 }
 
-function Reports() {
-  const reports = [
-    { title: "التقرير الشهري — مايو 2026", type: "تقرير دوري", committee: "جميع اللجان", date: "01 يونيو 2026", size: "4.2 MB", format: "PDF" },
-    { title: "محضر اجتماع رقم ١٤ — اللجنة المالية", type: "محضر اجتماع", committee: "اللجنة المالية العليا", date: "28 مايو 2026", size: "1.8 MB", format: "PDF" },
-    { title: "تقرير أداء توصيات الربع الأول 2026", type: "تقرير أداء", committee: "جميع اللجان", date: "15 أبريل 2026", size: "6.5 MB", format: "PDF" },
-    { title: "تقرير حضور الأعضاء — الربع الأول", type: "تقرير إحصائي", committee: "جميع اللجان", date: "12 أبريل 2026", size: "2.1 MB", format: "XLSX" },
-    { title: "محضر اجتماع رقم ٠٩ — التحول الرقمي", type: "محضر اجتماع", committee: "لجنة التحول الرقمي", date: "08 أبريل 2026", size: "1.4 MB", format: "PDF" },
-    { title: "التقرير السنوي 2025", type: "تقرير سنوي", committee: "مجلس الوزراء", date: "31 يناير 2026", size: "12.8 MB", format: "PDF" },
-  ];
-  const formatColor = { PDF: "var(--c-red)", XLSX: "var(--c-green)", DOCX: "var(--c-blue)" };
+/* ---------- LIST VIEW ---------- */
+function MeetingListItem({ time, date, dur, title, committee, room, status, online, attendees, agenda }) {
+  const sMap = {
+    live:    { cls: "pill pill-burg", txt: "جارٍ الآن", live: true },
+    upcoming:{ cls: "pill pill-blue", txt: "قادم" },
+    pending: { cls: "pill pill-amber", txt: "بانتظار النصاب" },
+    closed:  { cls: "pill pill-gray", txt: "منتهٍ" },
+  };
+  const s = sMap[status];
+  return (
+    <div className={`mi-row ${status === "live" ? "is-live" : ""}`}>
+      <div className="mi-date">
+        <div className="mi-day num">{date.d}</div>
+        <div className="mi-month">{date.m}</div>
+        <div className="mi-weekday">{date.w}</div>
+      </div>
+      <div className="mi-body">
+        <div className="mi-top">
+          <h3 className="mi-title">{title}</h3>
+          <span className={s.cls}>{s.live && <span className="dot dot-live"/>}{s.txt}</span>
+        </div>
+        <div className="mi-meta">
+          <span><Icon.Committees width="13" height="13"/> {committee}</span>
+          <span><Icon.Clock width="13" height="13"/> {time} <span style={{ opacity: 0.5 }}>({dur})</span></span>
+          <span><Icon.Pin width="13" height="13"/> {room}</span>
+          {online && <span className="online-tag">+ بث مباشر</span>}
+        </div>
+        <div className="mi-foot">
+          <div className="mi-attendees">
+            {attendees.slice(0, 4).map((a, i) => (
+              <span key={i} className={`avatar-sm ${a.tone || ""}`} style={{ marginInlineStart: i ? "-8px" : 0, zIndex: 4 - i }}>{a.initials}</span>
+            ))}
+            {attendees.length > 4 && (
+              <span className="mi-att-more">+{attendees.length - 4}</span>
+            )}
+          </div>
+          <div className="mi-agenda">
+            <Icon.Tasks width="13" height="13"/>
+            <span>{agenda} بنود في جدول الأعمال</span>
+          </div>
+          <div className="mi-actions">
+            {status === "live"
+              ? <button className="btn btn-burg btn-sm">الانضمام</button>
+              : status === "closed"
+                ? <button className="btn btn-soft btn-sm"><Icon.Documents width="13" height="13"/> المحضر</button>
+                : <button className="btn btn-secondary btn-sm">التفاصيل</button>}
+            <button className="iconbtn iconbtn-sm"><Icon.More width="16" height="16"/></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MeetingsList() {
+  return (
+    <div className="mi-list">
+      <MeetingListItem
+        date={{ d: "12", m: "مايو", w: "الثلاثاء — اليوم" }}
+        time="09:00 — 11:30" dur="ساعتان ونصف" status="live" online
+        title="مراجعة الموازنة التشغيلية للربع الثاني — 2026"
+        committee="اللجنة المالية العليا"
+        room="قاعة الوزراء — الدور الثالث"
+        attendees={[{ initials: "خ.خ" },{ initials: "م.ع", tone: "tone-blue" },{ initials: "ف.ج", tone: "tone-gold" },{ initials: "ع.ع" },{ initials: "ن.ك" },{ initials: "س.ع" }]}
+        agenda={7}/>
+      <MeetingListItem
+        date={{ d: "12", m: "مايو", w: "الثلاثاء — اليوم" }}
+        time="11:30 — 13:00" dur="ساعة ونصف" status="upcoming" online
+        title="مناقشة مشروع قانون حماية البيانات الشخصية"
+        committee="لجنة الشؤون القانونية"
+        room="قاعة (ب) — الديوان الأميري"
+        attendees={[{ initials: "ف.ج", tone: "tone-gold" },{ initials: "م.ع", tone: "tone-blue" },{ initials: "ع.ع" }]}
+        agenda={5}/>
+      <MeetingListItem
+        date={{ d: "12", m: "مايو", w: "الثلاثاء — اليوم" }}
+        time="14:00 — 16:00" dur="ساعتان" status="pending"
+        title="متابعة مبادرات التحول الرقمي 2026"
+        committee="لجنة التحول الرقمي"
+        room="عن بُعد — منصة Q-Connect"
+        attendees={[{ initials: "م.ع", tone: "tone-blue" },{ initials: "س.ع" },{ initials: "ن.ك" },{ initials: "ع.ع" },{ initials: "ر.م", tone: "tone-gold" }]}
+        agenda={9}/>
+      <MeetingListItem
+        date={{ d: "13", m: "مايو", w: "الأربعاء — غداً" }}
+        time="10:00 — 12:00" dur="ساعتان" status="upcoming" online
+        title="إقرار خطة الاستجابة للطوارئ الوطنية — المرحلة الثانية"
+        committee="لجنة الأمن الوطني"
+        room="غرفة العمليات الموحدة"
+        attendees={[{ initials: "ع.س" },{ initials: "خ.خ" },{ initials: "م.ع", tone: "tone-blue" },{ initials: "ف.ج", tone: "tone-gold" }]}
+        agenda={4}/>
+      <MeetingListItem
+        date={{ d: "11", m: "مايو", w: "الإثنين" }}
+        time="10:30 — 12:30" dur="ساعتان" status="closed"
+        title="مراجعة محضر الجلسة (١٤) واعتماد التوصيات"
+        committee="اللجنة المالية العليا"
+        room="قاعة الوزراء — الدور الثالث"
+        attendees={[{ initials: "خ.خ" },{ initials: "م.ع", tone: "tone-blue" },{ initials: "ف.ج", tone: "tone-gold" },{ initials: "ع.ع" },{ initials: "ن.ك" }]}
+        agenda={8}/>
+      <MeetingListItem
+        date={{ d: "10", m: "مايو", w: "الأحد" }}
+        time="13:00 — 15:00" dur="ساعتان" status="closed"
+        title="اعتماد مذكرة التفاهم مع الجهاز المركزي للإحصاء"
+        committee="لجنة التحول الرقمي"
+        room="قاعة الاجتماعات الرئيسية"
+        attendees={[{ initials: "م.ع", tone: "tone-blue" },{ initials: "ع.ع" },{ initials: "س.ع" }]}
+        agenda={6}/>
+    </div>
+  );
+}
+
+/* ---------- ARCHIVE VIEW ---------- */
+function ArchiveView() {
+  return (
+    <div className="archive-grid">
+      {[
+        { num: "1431", title: "محضر اجتماع اللجنة المالية العليا (١٤)", date: "11 مايو 2026", committee: "اللجنة المالية العليا", pages: 24, decisions: 6, signed: true },
+        { num: "1430", title: "محضر اجتماع التحول الرقمي (٠٩)", date: "10 مايو 2026", committee: "لجنة التحول الرقمي", pages: 18, decisions: 4, signed: true },
+        { num: "1429", title: "محضر اجتماع الشؤون القانونية (٠٧)", date: "08 مايو 2026", committee: "لجنة الشؤون القانونية", pages: 32, decisions: 9, signed: true },
+        { num: "1428", title: "محضر اجتماع الأمن الوطني (٠٣) — مغلق", date: "06 مايو 2026", committee: "لجنة الأمن الوطني", pages: 16, decisions: 3, signed: true, restricted: true },
+        { num: "1427", title: "محضر اجتماع الإسكان والمدن (٠٥)", date: "05 مايو 2026", committee: "لجنة الإسكان", pages: 22, decisions: 5, signed: false },
+        { num: "1426", title: "محضر اجتماع المرأة والطفل (٠٢)", date: "03 مايو 2026", committee: "لجنة المرأة والطفل", pages: 14, decisions: 4, signed: true },
+      ].map(m => (
+        <div key={m.num} className="archive-card">
+          <div className="ar-head">
+            <span className="doc-icon doc-pdf">PDF</span>
+            <div className="ar-num num">رقم {m.num}</div>
+            {m.restricted && <span className="pill pill-burg" style={{ marginInlineStart: "auto" }}><Icon.Lock width="11" height="11"/> سري</span>}
+          </div>
+          <h4 className="ar-title">{m.title}</h4>
+          <div className="ar-committee"><Icon.Committees width="13" height="13"/> {m.committee}</div>
+          <div className="ar-meta">
+            <span><Icon.Calendar width="12" height="12"/> {m.date}</span>
+            <span className="num">{m.pages} صفحة</span>
+            <span className="num">{m.decisions} قرارات</span>
+          </div>
+          <div className="ar-foot">
+            {m.signed
+              ? <span className="ar-sign signed"><Icon.Check width="13" height="13"/> موقّع</span>
+              : <span className="ar-sign pending"><Icon.Clock width="13" height="13"/> بانتظار التوقيع</span>}
+            <button className="btn btn-ghost btn-sm"><Icon.Download width="13" height="13"/> تنزيل</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ---------- ROOT ---------- */
+function MeetingsReports() {
+  const [view, setView] = React.useState("list");
+  const [filter, setFilter] = React.useState("all");
+  const counts = { all: 34, upcoming: 12, live: 1, closed: 21 };
 
   return (
     <>
-      <div className="grid stats-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: 22 }}>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>إجمالي التقارير</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>284</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>منذ بداية العام</div>
-        </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>محاضر اجتماعات</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>196</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>موثقة ومؤرشفة</div>
-        </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>تقارير دورية</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>62</div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>شهرية وربع سنوية</div>
-        </div>
-        <div className="card" style={{ padding: 22 }}>
-          <div style={{ fontSize: 13, color: "var(--c-ink-3)" }}>المساحة المستخدمة</div>
-          <div className="num" style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 700, marginTop: 6 }}>1.2<span style={{ fontSize: 22, color: "var(--c-ink-3)" }}> GB</span></div>
-          <div style={{ fontSize: 12, color: "var(--c-ink-3)", marginTop: 6 }}>من 50 GB متاحة</div>
-        </div>
+      <div className="crumbs">
+        <a>الرئيسية</a>
+        <span className="sep">›</span>
+        <span className="here">الاجتماعات</span>
       </div>
 
-      <div className="card" style={{ padding: "16px 20px", marginBottom: 20, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <div style={{ flex: 1, display: "flex", gap: 8, alignItems: "center", padding: "8px 16px", background: "var(--c-bg-2)", borderRadius: 999, minWidth: 280 }}>
-          <Icon.Search width="16" height="16"/>
-          <input style={{ flex: 1, border: 0, background: "transparent", outline: "none", fontSize: 14, fontFamily: "inherit" }}
-            placeholder="ابحث في التقارير والأرشيف…"/>
-        </div>
-        <button className="pill pill-burg" style={{ padding: "8px 16px", border: 0, fontWeight: 600 }}>الكل</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>محاضر</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>دورية</button>
-        <button className="pill pill-outline" style={{ padding: "8px 16px" }}>أداء</button>
-        <button className="btn btn-soft btn-sm"><Icon.Filter width="14" height="14"/> فلاتر</button>
-        <button className="btn btn-primary btn-sm"><Icon.Plus width="14" height="14"/> توليد تقرير</button>
-      </div>
+      <MeetingsToolbar view={view} onView={setView} filter={filter} onFilter={setFilter} count={counts}/>
 
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-        <table className="gov-table">
-          <thead>
-            <tr>
-              <th style={{ width: 80 }}>الصيغة</th>
-              <th>عنوان التقرير</th>
-              <th style={{ width: 160 }}>النوع</th>
-              <th style={{ width: 220 }}>اللجنة / النطاق</th>
-              <th style={{ width: 140 }}>التاريخ</th>
-              <th style={{ width: 100 }}>الحجم</th>
-              <th style={{ width: 130 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {reports.map((r, i) => (
-              <tr key={i}>
-                <td>
-                  <span style={{
-                    display: "inline-flex", alignItems: "center", justifyContent: "center",
-                    width: 44, height: 44, borderRadius: 8,
-                    background: `${formatColor[r.format]}18`,
-                    color: formatColor[r.format],
-                    fontFamily: "var(--font-display)", fontSize: 11, fontWeight: 700,
-                  }}>{r.format}</span>
-                </td>
-                <td style={{ fontWeight: 600 }}>{r.title}</td>
-                <td><span className="pill pill-outline">{r.type}</span></td>
-                <td style={{ fontSize: 13, color: "var(--c-ink-2)" }}>{r.committee}</td>
-                <td className="num" style={{ fontSize: 13 }}>{r.date}</td>
-                <td className="num" style={{ fontSize: 12.5, color: "var(--c-ink-3)" }}>{r.size}</td>
-                <td>
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <button className="btn btn-ghost btn-sm"><Icon.Download width="14" height="14"/></button>
-                    <button className="iconbtn iconbtn-sm"><Icon.More width="16" height="16"/></button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {view === "list" && <MeetingsList/>}
+      {view === "calendar" && <CalendarMonth/>}
+      {view === "archive" && <ArchiveView/>}
     </>
   );
 }
 
-window.MeetingsList = MeetingsList;
-window.Reports = Reports;
+window.MeetingsReports = MeetingsReports;

@@ -129,6 +129,26 @@ const Icon = {
       <path d="M20 6L9 17l-5-5"/>
     </svg>
   ),
+  Crown: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M3 7l4 4 5-7 5 7 4-4v11H3z"/>
+    </svg>
+  ),
+  Eye: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  Building: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 7h2M8 11h2M8 15h2M14 7h2M14 11h2M14 15h2"/>
+    </svg>
+  ),
+  Warning: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.01"/>
+    </svg>
+  ),
   Quorum: (p) => (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" {...p}>
       <circle cx="9" cy="9" r="3"/><circle cx="17" cy="11" r="2.5"/><path d="M3 20a6 6 0 0112 0"/><path d="M14 20a4 4 0 017-2.6"/>
@@ -140,9 +160,7 @@ const Icon = {
    GOV EMBLEM — official Council of Ministers logo
    ========================================================= */
 function GovEmblem({ size = 52, variant = "mark" }) {
-  const src = variant === "stacked" ? "assets/logo-stacked.png"
-            : variant === "full"    ? "assets/logo-full.png"
-            : "assets/logo-mark.png";
+  const src = "assets/logo-official.png";
   return (
     <img src={src} alt="State of Qatar — Council of Ministers"
       style={{ width: size, height: size, objectFit: "contain", display: "block" }}/>
@@ -152,7 +170,7 @@ function GovEmblem({ size = 52, variant = "mark" }) {
 /* =========================================================
    SIDEBAR
    ========================================================= */
-function Sidebar({ active = "dashboard", lead = "blue" }) {
+function Sidebar({ active = "dashboard", lead = "blue", onNav }) {
   const groups = [
     { title: "لوحة المعلومات", items: [
       { id: "dashboard",  label: "لوحة التحكم",                Icon: Icon.Dashboard },
@@ -165,6 +183,7 @@ function Sidebar({ active = "dashboard", lead = "blue" }) {
     ]},
     { title: "الاجتماعات", items: [
       { id: "meetings",   label: "الاجتماعات",                 Icon: Icon.Meetings, badge: "3" },
+      { id: "newmeeting", label: "إنشاء اجتماع",               Icon: Icon.Plus },
       { id: "live",       label: "إدارة أعمال الاجتماع",       Icon: Icon.Pin },
       { id: "agenda",     label: "إدارة جدول الأعمال",        Icon: Icon.Tasks },
     ]},
@@ -191,23 +210,33 @@ function Sidebar({ active = "dashboard", lead = "blue" }) {
 
   return (
     <aside className="sidebar" style={{ "--lead": leadColor }}>
+      {/* Deep blue brand header — ministerial gravitas */}
       <div className="sidebar-brand">
-        <div className="brand-emblem"><GovEmblem size={52} variant="mark"/></div>
+        <div className="brand-watermark" aria-hidden="true">
+          <GovEmblem size={140} variant="mark"/>
+        </div>
+        <div className="brand-emblem">
+          <GovEmblem size={108} variant="mark"/>
+        </div>
         <div className="brand-text">
           <div className="brand-ar">الأمانة العامة لمجلس الوزراء</div>
-          <div className="brand-en">Council of Ministers · State of Qatar</div>
-          <div className="brand-sub">منظومة اللجان الوزارية</div>
+          <div className="brand-en">Council of Ministers · Qatar</div>
+        </div>
+        <div className="brand-system">
+          <span className="brand-system-rule" aria-hidden="true"/>
+          <span className="brand-system-label">منظومة اللجان الوزارية</span>
         </div>
       </div>
-
-      <hr className="divider-gold" style={{ margin: "0 22px 6px" }} />
 
       <nav className="sidebar-nav">
         {groups.map((g, gi) => (
           <div key={gi} className="navgroup">
             <div className="navgroup-title">{g.title}</div>
             {g.items.map(it => (
-              <a key={it.id} className={`navitem ${active === it.id ? "is-active" : ""}`}>
+              <a key={it.id}
+                 className={`navitem ${active === it.id ? "is-active" : ""}`}
+                 onClick={(e) => { e.preventDefault(); onNav && onNav(it.id); }}
+                 style={{ cursor: "pointer" }}>
                 <span className="navitem-icon"><it.Icon width="18" height="18"/></span>
                 <span className="navitem-label">{it.label}</span>
                 {it.badge && <span className="navitem-badge">{it.badge}</span>}
@@ -218,8 +247,15 @@ function Sidebar({ active = "dashboard", lead = "blue" }) {
       </nav>
 
       <div className="sidebar-foot">
-        <a className="navitem"><span className="navitem-icon"><Icon.Settings width="18" height="18"/></span><span className="navitem-label">الإعدادات</span></a>
-        <div className="version">الإصدار 4.2.0 · مايو 2026</div>
+        <a className="navitem">
+          <span className="navitem-icon"><Icon.Settings width="18" height="18"/></span>
+          <span className="navitem-label">الإعدادات</span>
+        </a>
+        <div className="sidebar-foot-meta">
+          <span>الإصدار 4.2.0</span>
+          <span className="dot-mid">·</span>
+          <span>مايو 2026</span>
+        </div>
       </div>
     </aside>
   );
@@ -228,33 +264,52 @@ function Sidebar({ active = "dashboard", lead = "blue" }) {
 /* =========================================================
    TOPBAR
    ========================================================= */
-function Topbar({ title = "لوحة المعلومات", subtitle = "نظرة شاملة على نشاط اللجان" }) {
+function Topbar({ title = "لوحة المعلومات", subtitle = "نظرة شاملة على نشاط اللجان", onNav }) {
+  // Western numeral date — manually compose in Arabic months but with Western digits
+  const d = new Date();
+  const arDays = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  const arMonths = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  const dateLabel = `${arDays[d.getDay()]}، ${d.getDate()} ${arMonths[d.getMonth()]} ${d.getFullYear()}`;
   return (
     <header className="topbar">
-      <div className="topbar-titles">
-        <div className="eyebrow">{new Date().toLocaleDateString("ar-QA", { weekday: "long", year:"numeric", month:"long", day:"numeric" })}</div>
-        <h1 className="page-title">{title}</h1>
-        <div className="page-sub">{subtitle}</div>
-      </div>
-
-      <div className="topbar-actions">
-        <div className="search">
-          <Icon.Search width="16" height="16"/>
-          <input placeholder="ابحث في اللجان والاجتماعات والقرارات…"/>
-          <kbd>Ctrl K</kbd>
-        </div>
-        <button className="iconbtn" title="اللغة"><Icon.Globe width="18" height="18"/><span className="lang">EN</span></button>
-        <button className="iconbtn iconbtn-bell" title="الإشعارات">
-          <Icon.Bell width="18" height="18"/>
-          <span className="dot-notif"></span>
-        </button>
-        <div className="userchip">
-          <div className="avatar">ع.ع</div>
-          <div className="userinfo">
-            <div className="uname">عبدالله بن حمد العطية</div>
-            <div className="urole">أمين عام · مجلس الوزراء</div>
+      <div className="topbar-row topbar-row-1">
+        <div className="topbar-titles">
+          <div className="topbar-eyebrow">
+            <span className="topbar-eyebrow-rule"/>
+            <span>{dateLabel}</span>
+            <span className="topbar-eyebrow-dot">·</span>
+            <span>{d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} توقيت الدوحة</span>
           </div>
-          <Icon.ChevronDown width="14" height="14"/>
+          <h1 className="page-title">{title}</h1>
+          <div className="page-sub">{subtitle}</div>
+        </div>
+
+        <div className="topbar-actions">
+          <div className="search">
+            <Icon.Search width="16" height="16"/>
+            <input placeholder="ابحث في اللجان والاجتماعات والقرارات…"/>
+            <kbd>Ctrl K</kbd>
+          </div>
+          <button className="topbar-cta" onClick={() => onNav && onNav("newmeeting")}>
+            <Icon.Plus width="16" height="16"/>
+            <span>اجتماع جديد</span>
+          </button>
+          <button className="iconbtn iconbtn-onblue" title="اللغة" aria-label="Language"><span className="lang">EN</span></button>
+          <button className="iconbtn iconbtn-onblue" title="المساعدة" aria-label="Help">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17v.01"/></svg>
+          </button>
+          <button className="iconbtn iconbtn-onblue iconbtn-bell" title="الإشعارات" onClick={() => onNav && onNav("alerts")}>
+            <Icon.Bell width="18" height="18"/>
+            <span className="dot-notif"></span>
+          </button>
+          <div className="userchip userchip-onblue">
+            <div className="avatar">ع.ع</div>
+            <div className="userinfo">
+              <div className="uname">عبدالله بن حمد العطية</div>
+              <div className="urole">أمين عام · مجلس الوزراء</div>
+            </div>
+            <Icon.ChevronDown width="14" height="14"/>
+          </div>
         </div>
       </div>
     </header>

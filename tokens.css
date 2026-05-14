@@ -1,6 +1,7 @@
 /* =========================================================
    منظومة اللجان الوزارية — DESIGN TOKENS
-   Burgundy-led · Lusail typeface · Mobile-inspired softness
+   Blue-led (themeBlue #0D4261) · Burgundy as secondary accent
+   Lusail typeface · Mobile-inspired softness
    ========================================================= */
 
 /* ---- Real Lusail font, locally hosted ---- */
@@ -13,11 +14,30 @@
 }
 
 :root {
-  /* ---- BRAND PALETTE (burgundy-led, mobile-inspired) ---- */
-  /* Hero burgundy — sampled from the official logo */
-  --c-burgundy:        #7B1F3D;
-  --c-burgundy-900:    #4F1228;
-  --c-burgundy-800:    #631930;
+  /* ---- BRAND PALETTE ----
+     PRIMARY: themeBlue. Sidebar active, primary CTAs, page titles, focus rings.
+     SECONDARY: burgundy. Live-session pulse, urgent pills, secondary CTAs, ceremonial accents.
+     TERTIARY: gold. Heraldic dividers only, used sparingly.
+  */
+
+  /* ---- PRIMARY — themeBlue scale ---- */
+  --c-blue:            #0D4261;   /* themeBlue (Color(hex: "0D4261")) */
+  --c-blue-900:        #062236;
+  --c-blue-800:        #082E48;
+  --c-blue-700:        #0A3550;
+  --c-blue-600:        #0C3D5B;
+  --c-blue-500:        #155579;
+  --c-blue-400:        #3A7BA0;
+  --c-blue-300:        #7DA8C2;
+  --c-blue-200:        #BFD2DF;
+  --c-blue-100:        #DCE7EE;
+  --c-blue-50:         #EEF3F7;
+  --c-blue-25:         #F6F9FB;
+
+  /* ---- SECONDARY — burgundy scale ---- */
+  --c-burgundy:        #721D3C;
+  --c-burgundy-900:    #4A1226;
+  --c-burgundy-800:    #5C1730;
   --c-burgundy-700:    #6B1B36;
   --c-burgundy-600:    #8A2547;
   --c-burgundy-500:    #9D3158;
@@ -28,19 +48,13 @@
   --c-burgundy-50:     #FBF1F4;
   --c-burgundy-25:     #FDF7F9;
 
-  /* Supporting blue — restrained, ceremonial accent */
-  --c-blue:            #0D4261;
-  --c-blue-700:        #0A3550;
-  --c-blue-100:        #E2EAF0;
-  --c-blue-50:         #F2F6F9;
-
-  /* Gold — heraldic accent only */
+  /* ---- TERTIARY — gold (heraldic only) ---- */
   --c-gold:            #B89B5E;
   --c-gold-700:        #94783F;
   --c-gold-100:        #ECE3D2;
   --c-gold-50:         #F7F2E8;
 
-  /* Status */
+  /* ---- Status ---- */
   --c-green:           #1F8A3E;
   --c-green-100:       #DCEFE1;
   --c-amber:           #B8860B;
@@ -48,24 +62,40 @@
   --c-red:             #B42D2D;
   --c-red-100:         #F5DBDB;
 
-  /* ---- NEUTRALS (warm, off-white like the mobile screens) ---- */
-  --c-bg:              #F5F1EE;       /* warm canvas */
-  --c-bg-2:            #ECE6E1;
+  /* ---- SEMANTIC ALIASES ----
+     Use these in components so the lead color can flip without a rewrite. */
+  --c-primary:         var(--c-blue);
+  --c-primary-700:     var(--c-blue-700);
+  --c-primary-100:     var(--c-blue-100);
+  --c-primary-50:      var(--c-blue-50);
+  --c-secondary:       var(--c-burgundy);
+  --c-secondary-100:   var(--c-burgundy-100);
+  --c-secondary-50:    var(--c-burgundy-50);
+
+  /* ---- NEUTRALS (cooler now — slightly less warm than burgundy era) ---- */
+  --c-bg:              #F2F4F6;        /* cool canvas */
+  --c-bg-2:            #E6EAEE;
   --c-surface:         #FFFFFF;
-  --c-surface-soft:    #FBF8F6;       /* card-on-card */
-  --c-border:          #ECE2E0;       /* warm hairline */
-  --c-border-2:        #DDD1CD;
-  --c-ink:             #1F1A22;
-  --c-ink-2:           #4A3F46;
-  --c-ink-3:           #7B6E73;
-  --c-ink-4:           #A89DA1;
+  --c-surface-soft:    #F8FAFC;        /* card-on-card */
+  --c-border:          #E3E8EC;        /* cool hairline */
+  --c-border-2:        #CED6DD;
+  --c-ink:             #161E26;
+  --c-ink-2:           #38434E;
+  --c-ink-3:           #66727D;
+  --c-ink-4:           #96A2AC;
 
   /* ---- TYPE ---- */
   --font-display: "Lusail", "Noto Kufi Arabic", "Tajawal", "Cairo", system-ui, sans-serif;
   --font-body:    "Lusail", "Noto Kufi Arabic", "Tajawal", "Cairo", system-ui, sans-serif;
   --font-num:     "Lusail", "Inter", system-ui, sans-serif;
+}
 
-  /* ---- SHAPE & ELEVATION (soft, mobile-inspired) ---- */
+/* Force Western/lining numerals across the whole app */
+html, body { font-feature-settings: "lnum" 1, "tnum" 1; }
+.num { font-variant-numeric: lining-nums tabular-nums; }
+
+:root {
+  /* ---- SHAPE & ELEVATION ---- */
   --r-xs: 6px;
   --r-sm: 10px;
   --r-md: 14px;
@@ -73,11 +103,11 @@
   --r-xl: 28px;
   --r-pill: 999px;
 
-  --shadow-xs: 0 1px 2px rgba(75, 30, 50, 0.04);
-  --shadow-sm: 0 2px 8px rgba(75, 30, 50, 0.05);
-  --shadow-md: 0 6px 18px rgba(75, 30, 50, 0.07), 0 2px 6px rgba(75, 30, 50, 0.04);
-  --shadow-lg: 0 18px 46px rgba(75, 30, 50, 0.12), 0 6px 14px rgba(75, 30, 50, 0.06);
-  --shadow-card: 0 1px 0 rgba(123,31,61,0.04), 0 8px 24px rgba(123,31,61,0.06);
+  --shadow-xs: 0 1px 2px rgba(13, 66, 97, 0.05);
+  --shadow-sm: 0 2px 8px rgba(13, 66, 97, 0.06);
+  --shadow-md: 0 6px 18px rgba(13, 66, 97, 0.08), 0 2px 6px rgba(13, 66, 97, 0.05);
+  --shadow-lg: 0 18px 46px rgba(13, 66, 97, 0.14), 0 6px 14px rgba(13, 66, 97, 0.07);
+  --shadow-card: 0 1px 0 rgba(13, 66, 97, 0.04), 0 8px 24px rgba(13, 66, 97, 0.06);
 
   /* ---- MOTION ---- */
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -121,17 +151,18 @@ button { font-family: inherit; }
 
 .divider-gold {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--c-gold) 30%, var(--c-gold) 70%, transparent);
+  background: linear-gradient(90deg, transparent, var(--c-burgundy) 30%, var(--c-burgundy) 70%, transparent);
   border: 0;
-  opacity: 0.5;
+  opacity: 0.35;
 }
 
 .eyebrow {
   font-size: 11px;
   letter-spacing: 0.16em;
-  color: var(--c-burgundy-700);
+  color: var(--c-blue-700);
   font-weight: 600;
 }
+.eyebrow-secondary { color: var(--c-burgundy-700); }
 
 /* Buttons — pill, soft */
 .btn {
@@ -151,28 +182,49 @@ button { font-family: inherit; }
   line-height: 1;
 }
 .btn-primary {
+  background: var(--c-blue);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(13, 66, 97, 0.22);
+}
+.btn-primary:hover { background: var(--c-blue-700); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(13, 66, 97, 0.28); }
+.btn-secondary {
+  background: var(--c-surface);
+  color: var(--c-blue);
+  border-color: var(--c-blue-200);
+}
+.btn-secondary:hover { border-color: var(--c-blue); background: var(--c-blue-50); }
+
+/* Burgundy-lead variant — for ceremonial / urgent CTAs */
+.btn-burg {
   background: var(--c-burgundy);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(123,31,61,0.18);
+  box-shadow: 0 4px 12px rgba(123, 31, 61, 0.20);
 }
-.btn-primary:hover { background: var(--c-burgundy-700); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(123,31,61,0.22); }
-.btn-secondary {
+.btn-burg:hover { background: var(--c-burgundy-700); transform: translateY(-1px); }
+.btn-burg-secondary {
   background: var(--c-surface);
   color: var(--c-burgundy);
   border-color: var(--c-burgundy-200);
 }
-.btn-secondary:hover { border-color: var(--c-burgundy); background: var(--c-burgundy-50); }
+.btn-burg-secondary:hover { border-color: var(--c-burgundy); background: var(--c-burgundy-50); }
+
 .btn-ghost { background: transparent; color: var(--c-ink-2); }
-.btn-ghost:hover { background: var(--c-burgundy-50); color: var(--c-burgundy); }
+.btn-ghost:hover { background: var(--c-blue-50); color: var(--c-blue); }
 .btn-soft {
+  background: var(--c-blue-100);
+  color: var(--c-blue-700);
+}
+.btn-soft:hover { background: var(--c-blue-200); }
+.btn-soft-burg {
   background: var(--c-burgundy-100);
   color: var(--c-burgundy-700);
 }
-.btn-soft:hover { background: var(--c-burgundy-200); }
+.btn-soft-burg:hover { background: var(--c-burgundy-200); }
 .btn-sm { padding: 8px 14px; font-size: 13px; }
 .btn-lg { padding: 14px 28px; font-size: 15px; }
+.btn-block { width: 100%; }
 
-/* Pills / badges — soft tinted backgrounds (mobile DNA) */
+/* Pills / badges — soft tinted backgrounds */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -183,14 +235,16 @@ button { font-family: inherit; }
   font-weight: 500;
   line-height: 1.4;
 }
-.pill-burg    { background: var(--c-burgundy-100); color: var(--c-burgundy-700); }
 .pill-blue    { background: var(--c-blue-100);     color: var(--c-blue-700); }
+.pill-burg    { background: var(--c-burgundy-100); color: var(--c-burgundy-700); }
 .pill-gold    { background: var(--c-gold-100);     color: var(--c-gold-700); }
 .pill-green   { background: var(--c-green-100);    color: var(--c-green); }
 .pill-amber   { background: var(--c-amber-100);    color: var(--c-amber); }
 .pill-red     { background: var(--c-red-100);      color: var(--c-red); }
 .pill-gray    { background: var(--c-bg-2);         color: var(--c-ink-2); }
 .pill-outline { background: transparent; border: 1px solid var(--c-border-2); color: var(--c-ink-2); }
+.pill-solid-blue { background: var(--c-blue); color: #fff; }
+.pill-solid-burg { background: var(--c-burgundy); color: #fff; }
 
 /* Status dot */
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
@@ -200,6 +254,7 @@ button { font-family: inherit; }
 .dot-burg   { background: var(--c-burgundy); }
 .dot-gold   { background: var(--c-gold); }
 .dot-blue   { background: var(--c-blue); }
+/* "Live" stays burgundy on purpose — warm urgency against a cool UI */
 .dot-live   { background: var(--c-burgundy); box-shadow: 0 0 0 4px var(--c-burgundy-100); animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 0 4px var(--c-burgundy-100); }
@@ -220,11 +275,11 @@ button { font-family: inherit; }
   border-radius: var(--r-lg);
   padding: 20px;
 }
-.card-tinted-burg { background: var(--c-burgundy-50); }
 .card-tinted-blue { background: var(--c-blue-50); }
+.card-tinted-burg { background: var(--c-burgundy-50); }
 .card-tinted-gold { background: var(--c-gold-50); }
 
-/* Icon circle — used everywhere; matches mobile screens */
+/* Icon circle */
 .icon-circle {
   width: 56px; height: 56px;
   border-radius: 50%;
@@ -235,11 +290,12 @@ button { font-family: inherit; }
 }
 .icon-circle-sm { width: 40px; height: 40px; }
 .icon-circle-lg { width: 72px; height: 72px; }
-.icon-circle-burg { background: var(--c-burgundy-100); color: var(--c-burgundy); }
 .icon-circle-blue { background: var(--c-blue-100);     color: var(--c-blue); }
+.icon-circle-burg { background: var(--c-burgundy-100); color: var(--c-burgundy); }
 .icon-circle-gold { background: var(--c-gold-100);     color: var(--c-gold-700); }
 .icon-circle-green{ background: var(--c-green-100);    color: var(--c-green); }
 .icon-circle-amber{ background: var(--c-amber-100);    color: var(--c-amber); }
+.icon-circle-red  { background: var(--c-red-100);      color: var(--c-red); }
 .icon-circle-gray { background: var(--c-bg-2);         color: var(--c-ink-2); }
 
 /* Table */
@@ -268,9 +324,9 @@ button { font-family: inherit; }
   vertical-align: middle;
 }
 .gov-table tbody tr:last-child td { border-bottom: 0; }
-.gov-table tbody tr:hover td { background: var(--c-burgundy-25); }
+.gov-table tbody tr:hover td { background: var(--c-blue-25); }
 
-/* Inputs — pill, like mobile */
+/* Inputs — pill */
 .input {
   width: 100%;
   padding: 13px 18px;
@@ -284,8 +340,8 @@ button { font-family: inherit; }
 }
 .input:focus {
   outline: none;
-  border-color: var(--c-burgundy);
-  box-shadow: 0 0 0 4px var(--c-burgundy-100);
+  border-color: var(--c-blue);
+  box-shadow: 0 0 0 4px var(--c-blue-100);
 }
 .input-soft {
   background: var(--c-bg-2);
@@ -293,13 +349,13 @@ button { font-family: inherit; }
 }
 .input-soft:focus { background: var(--c-surface); }
 
-/* Heraldic top stripe */
+/* Heraldic top stripe — blue / gold / burgundy now */
 .heraldic-stripe {
   height: 3px;
   background: linear-gradient(90deg,
-    var(--c-burgundy) 0%, var(--c-burgundy) 33.3%,
+    var(--c-blue) 0%, var(--c-blue) 33.3%,
     var(--c-gold) 33.3%, var(--c-gold) 66.6%,
-    var(--c-blue) 66.6%, var(--c-blue) 100%);
+    var(--c-burgundy) 66.6%, var(--c-burgundy) 100%);
 }
 
 /* Soft progress bar */
@@ -315,10 +371,11 @@ button { font-family: inherit; }
   inset-inline-start: 0;
   top: 0;
   bottom: 0;
-  background: var(--c-burgundy);
+  background: var(--c-blue);
   border-radius: inherit;
   transition: width 360ms var(--ease);
 }
+.bar-fill-burg  { background: var(--c-burgundy); }
 .bar-fill-green { background: var(--c-green); }
 .bar-fill-amber { background: var(--c-amber); }
 .bar-fill-blue  { background: var(--c-blue); }
