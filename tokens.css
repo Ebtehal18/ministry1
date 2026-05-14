@@ -380,3 +380,28 @@ button { font-family: inherit; }
 .bar-fill-amber { background: var(--c-amber); }
 .bar-fill-blue  { background: var(--c-blue); }
 .bar-fill-gold  { background: var(--c-gold); }
+
+/* =========================================================
+   AVATAR PHOTOS — supports an inline <img> inside any
+   .avatar / .avatar-sm / .avatar-lg. The image fills the
+   tile; the initials underneath act as a fallback.
+   ========================================================= */
+.avatar, .avatar-sm, .avatar-lg { position: relative; overflow: hidden; }
+.avatar > img,
+.avatar-sm > img,
+.avatar-lg > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+  z-index: 1;
+}
+.avatar > span[aria-hidden],
+.avatar-sm > span[aria-hidden],
+.avatar-lg > span[aria-hidden] {
+  position: relative;
+  z-index: 0;
+}

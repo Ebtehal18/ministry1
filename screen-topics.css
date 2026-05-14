@@ -3,7 +3,8 @@
    ========================================================= */
 
 .tp-banner {
-  background: linear-gradient(135deg, var(--c-blue-50) 0%, var(--c-surface) 50%, var(--c-burgundy-50) 100%);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: var(--r-lg);
   padding: 24px 28px;
   display: grid;
@@ -190,7 +191,7 @@
 }
 .tp-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--c-blue), var(--c-burgundy));
+  background: var(--c-blue);
   border-radius: inherit;
 }
 

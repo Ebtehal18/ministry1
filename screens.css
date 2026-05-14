@@ -653,9 +653,14 @@
   font-weight: 500;
 }
 .login-hero-emblem {
-  width: 96px; height: 96px;
+  width: 280px;
+  height: auto;
+  max-height: 140px;
+  object-fit: contain;
+  object-position: right center;
   margin-bottom: 32px;
-  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3));
+  filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(0,0,0,0.3));
+  display: block;
 }
 .login-hero h1 {
   font-family: var(--font-display);

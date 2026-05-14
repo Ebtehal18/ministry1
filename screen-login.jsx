@@ -37,7 +37,7 @@ function Login() {
           دولة قطر · مجلس الوزراء
         </div>
 
-        <img className="login-hero-emblem" src="assets/logo-mark.png" alt="Council of Ministers"/>
+        <img className="login-hero-emblem" src="assets/logo-official.png" alt="Council of Ministers"/>
 
         <h1>
           منظومة <span className="gold">اللجان الوزارية</span>

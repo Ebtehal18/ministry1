@@ -77,6 +77,40 @@
 
 .brand-system { display: none; }
 
+/* Today's meetings pill in the sidebar brand */
+.brand-meetings-today {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 16px;
+  margin: 14px auto 0;
+  background: color-mix(in oklch, var(--c-green) 16%, transparent);
+  border: 1px solid color-mix(in oklch, var(--c-green) 40%, transparent);
+  border-radius: 999px;
+  color: #DCEFE1;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 140ms var(--ease);
+  width: fit-content;
+  text-align: center;
+}
+.brand-meetings-today:hover {
+  background: color-mix(in oklch, var(--c-green) 26%, transparent);
+  border-color: var(--c-green);
+  color: #fff;
+}
+.brand-meetings-today .bmt-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--c-green) 25%, transparent);
+}
+.brand-meetings-today .bmt-text { white-space: nowrap; }
+.brand-meetings-today .num { font-weight: 700; color: #fff; }
+
 .sidebar-nav {
   padding: 14px 14px;
   display: flex;
@@ -348,13 +382,13 @@
 }
 .iconbtn:hover { border-color: var(--c-blue-200); color: var(--c-blue); background: var(--c-blue-50); }
 
-.iconbtn-onblue {
+.topbar .iconbtn-onblue {
   background: rgba(255,255,255,0.10);
   border: 1px solid rgba(255,255,255,0.16);
-  color: rgba(255,255,255,0.92);
+  color: #fff;
   width: 40px; height: 40px;
 }
-.iconbtn-onblue:hover {
+.topbar .iconbtn-onblue:hover {
   background: rgba(255,255,255,0.18);
   border-color: rgba(255,255,255,0.30);
   color: #fff;

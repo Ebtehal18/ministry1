@@ -4,7 +4,7 @@
    MEMBERS DIRECTORY — grid of all committee members
    ========================================================= */
 
-function MemberCard({ initials, tone, name, role, entity, committees, attendance, decisions, meetings, presence, role_badge }) {
+function MemberCard({ initials, tone, name, role, entity, committees, attendance, decisions, meetings, presence, role_badge, photo }) {
   return (
     <article className="md-card">
       <div className="md-card-top">
@@ -14,7 +14,10 @@ function MemberCard({ initials, tone, name, role, entity, committees, attendance
         </button>
       </div>
       <div className="md-avatar-wrap">
-        <span className={`avatar-lg ${tone || ""}`}>{initials}</span>
+        <span className={`avatar-lg ${tone || ""}`}>
+          {photo && <img src={photo} alt=""/>}
+          <span aria-hidden="true">{initials}</span>
+        </span>
         <span className={`presence presence-${presence}`}/>
       </div>
       <h3 className="md-name">{name}</h3>
@@ -116,7 +119,7 @@ function Members() {
 
       {/* Grid */}
       <div className="md-grid">
-        <MemberCard initials="خ.خ" tone="" name="د. خالد بن محمد الخليفي"
+        <MemberCard initials="خ.خ" photo="assets/avatar-placeholder.svg" tone="" name="د. خالد بن محمد الخليفي"
           role="رئيس اللجنة المالية العليا" entity="وزارة المالية"
           presence="online" attendance={97} meetings={42} decisions={68}
           role_badge={{ tone: "burg", txt: "رئيس" }}
@@ -126,7 +129,7 @@ function Members() {
             { name: "الموازنة", tone: "blue" },
             { name: "الاستثمار", tone: "gold" },
           ]}/>
-        <MemberCard initials="ر.م" tone="tone-gold" name="د. ريم بنت عبدالله المرّي"
+        <MemberCard initials="ر.م" photo="assets/avatar-placeholder.svg" tone="tone-gold" name="د. ريم بنت عبدالله المرّي"
           role="رئيس لجنة المرأة والطفل" entity="وزارة التنمية الاجتماعية"
           presence="online" attendance={94} meetings={31} decisions={47}
           role_badge={{ tone: "burg", txt: "رئيس" }}
@@ -134,7 +137,7 @@ function Members() {
             { name: "المرأة والطفل", tone: "burg", lead: true },
             { name: "التنمية الاجتماعية", tone: "blue" },
           ]}/>
-        <MemberCard initials="ع.س" tone="" name="اللواء عبدالله السويدي"
+        <MemberCard initials="ع.س" photo="assets/avatar-placeholder.svg" tone="" name="اللواء عبدالله السويدي"
           role="رئيس لجنة الأمن الوطني" entity="وزارة الداخلية"
           presence="busy" attendance={92} meetings={28} decisions={36}
           role_badge={{ tone: "burg", txt: "رئيس" }}
@@ -142,7 +145,7 @@ function Members() {
             { name: "الأمن الوطني", tone: "burg", lead: true },
             { name: "الطوارئ", tone: "burg" },
           ]}/>
-        <MemberCard initials="م.ع" tone="tone-blue" name="م. محمد بن عيسى العنزي"
+        <MemberCard initials="م.ع" photo="assets/avatar-placeholder.svg" tone="tone-blue" name="م. محمد بن عيسى العنزي"
           role="مدير عام الخزانة العامة" entity="وزارة المالية"
           presence="online" attendance={89} meetings={56} decisions={91}
           role_badge={{ tone: "blue", txt: "مقرر" }}
@@ -153,7 +156,7 @@ function Members() {
             { name: "الاستثمار", tone: "gold" },
             { name: "الموازنة", tone: "blue" },
           ]}/>
-        <MemberCard initials="ف.ج" tone="tone-gold" name="د. فاطمة الجابر"
+        <MemberCard initials="ف.ج" photo="assets/avatar-placeholder.svg" tone="tone-gold" name="د. فاطمة الجابر"
           role="مستشار قانوني — الديوان الأميري" entity="الديوان الأميري"
           presence="online" attendance={95} meetings={38} decisions={62}
           role_badge={{ tone: "blue", txt: "مقرر" }}
@@ -162,7 +165,7 @@ function Members() {
             { name: "حوكمة المخاطر", tone: "blue" },
             { name: "حماية البيانات", tone: "burg" },
           ]}/>
-        <MemberCard initials="ع.ع" tone="" name="م. علياء بنت أحمد العمادي"
+        <MemberCard initials="ع.ع" photo="assets/avatar-placeholder.svg" tone="" name="م. علياء بنت أحمد العمادي"
           role="رئيس قسم الهوية الرقمية" entity="وزارة الاتصالات"
           presence="online" attendance={91} meetings={34} decisions={52}
           committees={[
@@ -170,21 +173,21 @@ function Members() {
             { name: "حماية البيانات", tone: "burg" },
             { name: "الذكاء الاصطناعي", tone: "blue" },
           ]}/>
-        <MemberCard initials="س.ع" tone="" name="م. سارة بنت يوسف العذبة"
+        <MemberCard initials="س.ع" photo="assets/avatar-placeholder.svg" tone="" name="م. سارة بنت يوسف العذبة"
           role="مهندس أمن المعلومات" entity="جهاز الأمن السيبراني"
           presence="busy" attendance={88} meetings={22} decisions={29}
           committees={[
             { name: "التحول الرقمي", tone: "blue" },
             { name: "الأمن السيبراني", tone: "burg" },
           ]}/>
-        <MemberCard initials="ن.ك" tone="" name="م. ناصر بن جاسم الكواري"
+        <MemberCard initials="ن.ك" photo="assets/avatar-placeholder.svg" tone="" name="م. ناصر بن جاسم الكواري"
           role="مدير التخطيط العمراني" entity="وزارة البلدية"
           presence="offline" attendance={84} meetings={26} decisions={31}
           committees={[
             { name: "الإسكان والمدن", tone: "blue", lead: true },
             { name: "التنمية المستدامة", tone: "blue" },
           ]}/>
-        <MemberCard initials="أ.ج" tone="tone-blue" name="أ. أحمد بن خليفة الجابر"
+        <MemberCard initials="أ.ج" photo="assets/avatar-placeholder.svg" tone="tone-blue" name="أ. أحمد بن خليفة الجابر"
           role="وكيل وزارة الاقتصاد المساعد" entity="وزارة التجارة والصناعة"
           presence="absent" attendance={71} meetings={19} decisions={24}
           committees={[

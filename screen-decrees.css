@@ -4,28 +4,25 @@
    ========================================================= */
 
 .fd-banner {
-  background: linear-gradient(135deg, var(--c-burgundy-50) 0%, var(--c-surface) 50%, var(--c-blue-50) 100%);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
   border-radius: var(--r-lg);
   padding: 28px 32px;
   display: grid;
-  grid-template-columns: 80px 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 28px;
   align-items: center;
   margin-bottom: 22px;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-xs);
 }
 .fd-banner::before {
   content: "";
   position: absolute;
   top: 0; bottom: 0; inset-inline-start: 0;
   width: 4px;
-  background: linear-gradient(180deg, var(--c-burgundy), var(--c-gold) 50%, var(--c-blue));
-}
-.fd-banner-emblem {
-  color: var(--c-burgundy);
-  opacity: 0.85;
+  background: var(--c-burgundy);
 }
 .fd-banner-title {
   font-family: var(--font-display);
@@ -116,7 +113,7 @@
 .fd-card.is-open { box-shadow: var(--shadow-lg); }
 
 .fd-ribbon {
-  background: linear-gradient(160deg, var(--c-burgundy) 0%, var(--c-burgundy-900) 100%);
+  background: var(--c-burgundy);
   color: #fff;
   padding: 26px 22px;
   display: flex; flex-direction: column;
@@ -157,11 +154,6 @@
   color: rgba(255,255,255,0.82);
   margin-top: 6px;
   letter-spacing: 0.04em;
-}
-.fd-ribbon-seal {
-  color: var(--c-gold);
-  opacity: 0.6;
-  margin-top: 2px;
 }
 
 .fd-body { padding: 22px 26px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }

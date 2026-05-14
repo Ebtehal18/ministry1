@@ -255,7 +255,11 @@ function ArchiveView() {
 
 /* ---------- ROOT ---------- */
 function MeetingsReports() {
-  const [view, setView] = React.useState("list");
+  const [view, setView] = React.useState(() => {
+    const v = window.__defaultMeetingsView;
+    if (v) { delete window.__defaultMeetingsView; return v; }
+    return "list";
+  });
   const [filter, setFilter] = React.useState("all");
   const counts = { all: 34, upcoming: 12, live: 1, closed: 21 };
 

@@ -30,14 +30,6 @@ function DecreeCard({ decree, year, no, title, committee, signedBy, signedRole, 
           <div className="fd-ribbon-no num">{no}</div>
           <div className="fd-ribbon-year num">لسنة {year}</div>
         </div>
-        <div className="fd-ribbon-seal" aria-hidden="true">
-          <svg viewBox="0 0 80 80" width="64" height="64">
-            <circle cx="40" cy="40" r="36" fill="none" stroke="currentColor" strokeWidth="1.4" opacity="0.5"/>
-            <circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" strokeWidth="1.2" opacity="0.7"/>
-            <path d="M40 14 L44 30 L60 30 L48 40 L52 56 L40 46 L28 56 L32 40 L20 30 L36 30 Z"
-              fill="currentColor" opacity="0.85"/>
-          </svg>
-        </div>
       </div>
 
       {/* Body */}
@@ -189,12 +181,6 @@ function FormationDecrees() {
 
       {/* Stats banner */}
       <div className="fd-banner">
-        <div className="fd-banner-emblem" aria-hidden="true">
-          <svg viewBox="0 0 80 80" width="68" height="68">
-            <circle cx="40" cy="40" r="36" fill="none" stroke="currentColor" strokeWidth="1.4" opacity="0.6"/>
-            <path d="M40 12 L46 32 L66 32 L50 44 L56 64 L40 52 L24 64 L30 44 L14 32 L34 32 Z" fill="currentColor"/>
-          </svg>
-        </div>
         <div className="fd-banner-info">
           <span className="eyebrow eyebrow-secondary">السجل الرسمي</span>
           <h2 className="fd-banner-title">قرارات تشكيل اللجان الوزارية</h2>

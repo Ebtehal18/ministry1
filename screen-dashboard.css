@@ -4,49 +4,71 @@
 
 .grid { display: grid; gap: 18px; }
 
-/* HERO GREETING — themeBlue gradient with gold radial */
+/* HERO GREETING — burgundy top strip + dark navy body */
 .dash-hero {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow: 0 12px 30px rgba(13, 66, 97, 0.18);
+  position: relative;
+}
+.dash-hero::before,
+.dash-hero::after { content: none !important; }
+
+.dh-strip {
+  background: var(--c-burgundy);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 28px;
+}
+.dh-strip-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.92);
+}
+.dh-status-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 0 3px rgba(31, 138, 62, 0.22);
+}
+.dh-strip-greeting {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.dh-body {
+  background: var(--c-blue-900);
+  color: #fff;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 24px;
+  padding: 26px 30px 28px;
   align-items: center;
-  background: linear-gradient(135deg, var(--c-blue) 0%, var(--c-blue-900) 100%);
-  border-radius: var(--r-xl);
-  padding: 28px 32px;
-  margin-bottom: 22px;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 18px 40px rgba(13, 66, 97, 0.22);
 }
-.dash-hero::before {
-  content: "";
-  position: absolute;
-  top: -80px; inset-inline-start: -80px;
-  width: 280px; height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--c-blue-400) 0%, transparent 70%);
-  opacity: 0.5;
-}
-.dash-hero::after {
-  content: "";
-  position: absolute;
-  bottom: -100px; inset-inline-end: -60px;
-  width: 280px; height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--c-gold) 0%, transparent 70%);
-  opacity: 0.18;
-}
+
+/* Reset legacy positioning since pseudo-elements are gone */
 .dash-hero > * { position: relative; }
-.dh-greeting { font-size: 14px; color: var(--c-blue-200); font-weight: 500; }
+.dh-greeting { display: none; }
 .dh-name {
   font-family: var(--font-display);
   font-size: 28px;
   font-weight: 700;
-  margin: 6px 0 6px;
+  color: #fff;
+  margin: 0 0 6px;
   letter-spacing: -0.01em;
 }
-.dh-role { font-size: 14px; color: rgba(255,255,255,0.78); }
+.dh-role { font-size: 14px; color: rgba(255,255,255,0.78); margin-bottom: 18px; }
 .dh-quick {
   display: flex;
   gap: 10px;
@@ -79,20 +101,22 @@
 }
 
 .dh-date {
-  text-align: end;
-  font-size: 13px;
+  text-align: center;
   color: rgba(255,255,255,0.78);
+  padding-inline-start: 24px;
+  border-inline-start: 1px solid rgba(255,255,255,0.16);
 }
+.dh-date-w { font-size: 13px; color: rgba(255,255,255,0.78); margin-bottom: 6px; }
 .dh-date-num {
   font-family: var(--font-display);
-  font-size: 38px;
+  font-size: 52px;
   font-weight: 700;
   color: #fff;
   line-height: 1;
   margin: 4px 0;
   letter-spacing: -0.02em;
 }
-.dh-date-month { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.86); }
+.dh-date-month { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.78); margin-top: 6px; }
 
 /* NEWSBAR — ticker-style brief; burgundy hot tag, scrolling rail */
 .newsbar {
@@ -493,7 +517,18 @@
 .dec-leg-val { font-weight: 700; color: var(--c-ink); font-family: var(--font-num); }
 
 /* SECTION */
-.section { margin-bottom: 28px; }
+.section { margin-bottom: 20px; margin-top: -4px; }
+.section-head-link {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: var(--r-sm);
+  padding: 2px 6px;
+  margin-inline-start: -6px;
+  transition: background 140ms var(--ease);
+}
+.section-head-link:hover { background: var(--c-blue-50); }
+.section-head-link:hover .section-title { color: var(--c-blue); }
 .section-title {
   font-family: var(--font-display);
   font-size: 19px;
@@ -516,6 +551,7 @@
 /* COMMITTEES MINI GRID — soft cards */
 .committees-grid { grid-template-columns: repeat(4, 1fr); }
 .committee-mini {
+  transition: all 160ms var(--ease);
   background: var(--c-surface);
   border-radius: var(--r-lg);
   overflow: hidden;
@@ -530,6 +566,7 @@
 }
 .cm-stripe {
   height: 64px;
+  background-image: none !important;
   position: relative;
   display: flex;
   align-items: center;

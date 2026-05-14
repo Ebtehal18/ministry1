@@ -1,5 +1,5 @@
 /* global React, ReactDOM */
-/* global Sidebar, Topbar, Dashboard, CommitteeDetail, MeetingDetail, Login, CommitteesList, MeetingsReports, Recommendations, Members, Analytics, FormationDecrees, Notifications, ScreenPlaceholder, AgendaBuilder, ExecutionTracking, ReportsArchive, Topics, CreateMeeting */
+/* global Sidebar, Topbar, Dashboard, CommitteeDetail, MeetingDetail, MeetingDetails, Login, CommitteesList, MeetingsReports, Recommendations, RecommendationDetails, Members, Analytics, FormationDecrees, Notifications, ScreenPlaceholder, AgendaBuilder, ExecutionTracking, ReportsArchive, Topics, CreateMeeting, Settings, Profile, ReportDetails, AddMember */
 /* global TweaksPanel, useTweaks, TweakSection, TweakRadio */
 
 const { useState } = React;
@@ -54,7 +54,6 @@ function LeadStyles({ lead }) {
       [data-lead="${lead}"] .navitem.is-active::before { background: ${c.primary}; }
       [data-lead="${lead}"] .topbar::after { background: ${c.accent}; }
       [data-lead="${lead}"] .tab.is-active { color: ${c.primary}; border-bottom-color: ${c.accent}; }
-      [data-lead="${lead}"] .brand-ar { color: ${c.primary}; }
     `}</style>
   );
 }
@@ -136,6 +135,182 @@ function Root() {
     return () => document.removeEventListener("click", handler, true);
   }, []);
 
+  // Wire up breadcrumb links + back button + data-nav anywhere
+  React.useEffect(() => {
+    const handler = (e) => {
+      const a = e.target.closest("[data-back], [data-nav]");
+      if (!a) return;
+      const target = a.getAttribute("data-back") || a.getAttribute("data-nav");
+      if (!target) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrent(target);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("click", handler, true);
+    // Custom event for programmatic nav from inside components
+    const onNavEvent = (e) => { setCurrent(e.detail); window.scrollTo({top:0, behavior:"smooth"}); };
+    window.addEventListener("nav", onNavEvent);
+    return () => {
+      document.removeEventListener("click", handler, true);
+      window.removeEventListener("nav", onNavEvent);
+    };
+  }, []);
+
+  // "تسجيل الخروج" buttons anywhere → return to login
+  React.useEffect(() => {
+    const handler = (e) => {
+      const btn = e.target.closest("button, a");
+      if (!btn) return;
+      const txt = (btn.textContent || "").trim();
+      if (txt.includes("تسجيل الخروج")) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrent("login");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // Click on a meeting row → meeting details page
+  React.useEffect(() => {
+    const handler = (e) => {
+      // "عرض التقويم" buttons → open meetings page with calendar view
+      const btn = e.target.closest("button");
+      if (btn) {
+        const txt = (btn.textContent || "").trim();
+        if (txt.includes("عرض التقويم")) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.__defaultMeetingsView = "calendar";
+          setCurrent("meetings-reports");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+      }
+
+      const row = e.target.closest(".mi-row");
+      if (!row) return;
+      // Let "الانضمام" go to the live meeting view; everything else → details
+      const rowBtn = e.target.closest("button, a");
+      const txt = rowBtn ? (rowBtn.textContent || "").trim() : "";
+      if (txt.includes("الانضمام")) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrent("meeting");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      // Ignore clicks on the More menu icon button
+      if (rowBtn && rowBtn.classList.contains("iconbtn")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrent("meeting-details");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // Click on a committee row → committee detail page
+  React.useEffect(() => {
+    const handler = (e) => {
+      const row = e.target.closest(".cl-row");
+      if (!row) return;
+      const btn = e.target.closest("button, a");
+      if (btn && btn.classList.contains("iconbtn")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrent("committee-detail");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // Click on a report row → report details page
+  React.useEffect(() => {
+    const handler = (e) => {
+      const row = e.target.closest(".rp-row");
+      if (!row) return;
+      const btn = e.target.closest("button, a");
+      if (btn && btn.classList.contains("iconbtn")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrent("report-details");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // Click on settings icon in sidebar foot → settings page
+  React.useEffect(() => {
+    const handler = (e) => {
+      const item = e.target.closest(".sidebar-foot .navitem");
+      if (!item) return;
+      const txt = (item.textContent || "").trim();
+      if (txt.includes("الإعدادات")) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrent("settings");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // Click on user chip in topbar → profile page
+  React.useEffect(() => {
+    const handler = (e) => {
+      const chip = e.target.closest(".topbar .userchip");
+      if (!chip) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrent("profile");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // "إضافة عضو" button → add member page
+  React.useEffect(() => {
+    const handler = (e) => {
+      const btn = e.target.closest("button, a");
+      if (!btn) return;
+      const txt = (btn.textContent || "").trim();
+      if (txt.includes("إضافة عضو")) {
+        e.preventDefault();
+        e.stopPropagation();
+        setCurrent("add-member");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
+  // Click on a recommendation row → recommendation details page
+  React.useEffect(() => {
+    const handler = (e) => {
+      const row = e.target.closest(".rec-table tbody tr");
+      if (!row) return;
+      const btn = e.target.closest("button, a");
+      // Ignore clicks on the More menu icon button
+      if (btn && btn.classList.contains("iconbtn")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setCurrent("recommendation-details");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    document.addEventListener("click", handler, true);
+    return () => document.removeEventListener("click", handler, true);
+  }, []);
+
   // Hook login button to navigate
   React.useEffect(() => {
     if (current !== "login") return;
@@ -192,6 +367,14 @@ function Root() {
             <MeetingDetail/>
           </AppShell>
         );
+      case "meeting-details":
+        return (
+          <AppShell active="meetings" lead={tw.lead} onNav={goTo}
+            title="تفاصيل الاجتماع"
+            subtitle="معلومات الاجتماع وجدول الأعمال والمستندات والحضور">
+            <MeetingDetails/>
+          </AppShell>
+        );
       case "meetings-reports":
         return (
           <AppShell active="meetings" lead={tw.lead} onNav={goTo}
@@ -206,6 +389,14 @@ function Root() {
             title="القرارات والتوصيات"
             subtitle="متابعة تنفيذ القرارات والتوصيات الصادرة عن اللجان">
             <Recommendations/>
+          </AppShell>
+        );
+      case "recommendation-details":
+        return (
+          <AppShell active="recs" lead={tw.lead} onNav={goTo}
+            title="تفاصيل التوصية"
+            subtitle="تتبع تنفيذ التوصية ومراحلها والجهات المعنية">
+            <RecommendationDetails/>
           </AppShell>
         );
       case "members":
@@ -294,6 +485,38 @@ function Root() {
             title="التقارير والأرشفة"
             subtitle="مكتبة التقارير ومحاضر الاجتماعات المؤرشفة">
             <ReportsArchive/>
+          </AppShell>
+        );
+      case "report-details":
+        return (
+          <AppShell active="reports" lead={tw.lead} onNav={goTo}
+            title="تفاصيل التقرير"
+            subtitle="عرض وتحميل وإدارة محضر الاجتماع">
+            <ReportDetails/>
+          </AppShell>
+        );
+      case "settings":
+        return (
+          <AppShell active="" lead={tw.lead} onNav={goTo}
+            title="الإعدادات"
+            subtitle="تخصيص حسابك وتفضيلاتك في النظام">
+            <Settings/>
+          </AppShell>
+        );
+      case "profile":
+        return (
+          <AppShell active="" lead={tw.lead} onNav={goTo}
+            title="الملف الشخصي"
+            subtitle="عرض وتحرير بيانات حسابك">
+            <Profile/>
+          </AppShell>
+        );
+      case "add-member":
+        return (
+          <AppShell active="members" lead={tw.lead} onNav={goTo}
+            title="إضافة عضو جديد"
+            subtitle="إعداد حساب عضو جديد وتحديد عضوياته وصلاحياته">
+            <AddMember/>
           </AppShell>
         );
       default:

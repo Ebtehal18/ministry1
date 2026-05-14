@@ -8,19 +8,28 @@ function DashHero() {
   const today = new Date();
   return (
     <div className="dash-hero">
-      <div>
-        <div className="dh-greeting">السلام عليكم سعادة السيد</div>
-        <div className="dh-name">عبدالله بن حمد بن عبدالله العطية</div>
-        <div className="dh-role">أمين عام · مجلس الوزراء</div>
-        <div className="dh-quick">
-          <button className="btn btn-primary"><Icon.Plus width="14" height="14" /> إنشاء اجتماع</button>
-          <button className="btn btn-secondary"><Icon.Calendar width="14" height="14" /> عرض التقويم</button>
+      {/* Burgundy greeting strip */}
+      <div className="dh-strip">
+        <div className="dh-strip-greeting">السلام عليكم سعادة السيد — أهلاً بك في لوحة التحكم</div>
+        <div className="dh-strip-status">
+          <span className="dh-status-dot"/> متصل الآن
         </div>
       </div>
-      <div className="dh-date">
-        <div>{today.toLocaleDateString("ar-QA", { weekday: "long" })}</div>
-        <div className="dh-date-num num">{today.getDate()}</div>
-        <div className="dh-date-month">{today.toLocaleDateString("ar-QA", { month: "long", year: "numeric" })}</div>
+      {/* Dark navy body */}
+      <div className="dh-body">
+        <div>
+          <div className="dh-name">عبدالله بن حمد بن عبدالله العطية</div>
+          <div className="dh-role">أمين عام · مجلس الوزراء</div>
+          <div className="dh-quick">
+            <button className="btn btn-primary"><Icon.Plus width="14" height="14" /> إنشاء اجتماع</button>
+            <button className="btn btn-secondary"><Icon.Calendar width="14" height="14" /> عرض التقويم</button>
+          </div>
+        </div>
+        <div className="dh-date">
+          <div className="dh-date-w">{today.toLocaleDateString("ar-QA", { weekday: "long" })}</div>
+          <div className="dh-date-num num">{today.getDate()}</div>
+          <div className="dh-date-month">{today.toLocaleDateString("ar-QA", { month: "long", year: "numeric" })}</div>
+        </div>
       </div>
     </div>);
 
@@ -118,10 +127,10 @@ function QuorumBar({ present, total, color = "var(--c-blue)" }) {
 
 }
 
-function CommitteeMini({ name, members, nextMeeting, chair, color, type }) {
+function CommitteeMini({ name, members, nextMeeting, chair, color, type, onClick }) {
   return (
-    <div className="committee-mini">
-      <div className="cm-stripe" style={{ background: `linear-gradient(135deg, ${color}, ${color}dd)` }}>
+    <div className="committee-mini" onClick={onClick} style={{ cursor: "pointer" }}>
+      <div className="cm-stripe" style={{ background: color }}>
         {name.split(" ").slice(-2, -1)[0]?.charAt(0) || "ل"}
       </div>
       <div className="cm-body">
@@ -297,21 +306,25 @@ function Dashboard() {
       {/* COMMITTEES STRIP */}
       <section className="section">
         <div className="section-head">
-          <div>
+          <a className="section-head-link" data-nav="committees">
             <span className="eyebrow">اللجان الرئيسية</span>
             <h2 className="section-title">اللجان التي تترأسها أو تشارك فيها</h2>
-          </div>
-          <a className="see-all">عرض جميع اللجان <Icon.ChevronStart width="14" height="14" /></a>
+          </a>
+          <a className="see-all" data-nav="committees">عرض جميع اللجان <Icon.ChevronStart width="14" height="14" /></a>
         </div>
         <div className="grid committees-grid">
           <CommitteeMini name="اللجنة المالية العليا" type="لجنة دائمة" color="var(--c-blue)"
-          chair="معالي/ خالد بن خليفة" members={12} nextMeeting="غداً · 10:00" />
+          chair="معالي/ خالد بن خليفة" members={12} nextMeeting="غداً · 10:00"
+          onClick={() => window.dispatchEvent(new CustomEvent("nav", { detail: "committee-detail" }))}/>
           <CommitteeMini name="لجنة التحول الرقمي" type="لجنة استراتيجية" color="var(--c-burgundy)"
-          chair="معالي/ محمد بن عبدالله" members={9} nextMeeting="الخميس · 14:00" />
+          chair="معالي/ محمد بن عبدالله" members={9} nextMeeting="الخميس · 14:00"
+          onClick={() => window.dispatchEvent(new CustomEvent("nav", { detail: "committee-detail" }))}/>
           <CommitteeMini name="لجنة الشؤون القانونية" type="لجنة دائمة" color="var(--c-gold-700)"
-          chair="معالي/ فهد بن جاسم" members={8} nextMeeting="اليوم · 11:30" />
+          chair="معالي/ فهد بن جاسم" members={8} nextMeeting="اليوم · 11:30"
+          onClick={() => window.dispatchEvent(new CustomEvent("nav", { detail: "committee-detail" }))}/>
           <CommitteeMini name="لجنة الأمن الوطني" type="لجنة سيادية" color="var(--c-blue-900)"
-          chair="سعادة/ عبدالعزيز السبيعي" members={11} nextMeeting="الأحد · 09:00" />
+          chair="سعادة/ عبدالعزيز السبيعي" members={11} nextMeeting="الأحد · 09:00"
+          onClick={() => window.dispatchEvent(new CustomEvent("nav", { detail: "committee-detail" }))}/>
         </div>
       </section>
 

@@ -226,6 +226,10 @@ function Sidebar({ active = "dashboard", lead = "blue", onNav }) {
           <span className="brand-system-rule" aria-hidden="true"/>
           <span className="brand-system-label">منظومة اللجان الوزارية</span>
         </div>
+        <a className="brand-meetings-today" data-nav="meetings-reports">
+          <span className="bmt-dot"/>
+          <span className="bmt-text"><span className="num">4</span> اجتماعات اليوم</span>
+        </a>
       </div>
 
       <nav className="sidebar-nav">
@@ -290,10 +294,6 @@ function Topbar({ title = "لوحة المعلومات", subtitle = "نظرة ش
             <input placeholder="ابحث في اللجان والاجتماعات والقرارات…"/>
             <kbd>Ctrl K</kbd>
           </div>
-          <button className="topbar-cta" onClick={() => onNav && onNav("newmeeting")}>
-            <Icon.Plus width="16" height="16"/>
-            <span>اجتماع جديد</span>
-          </button>
           <button className="iconbtn iconbtn-onblue" title="اللغة" aria-label="Language"><span className="lang">EN</span></button>
           <button className="iconbtn iconbtn-onblue" title="المساعدة" aria-label="Help">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4M12 17v.01"/></svg>
@@ -302,8 +302,11 @@ function Topbar({ title = "لوحة المعلومات", subtitle = "نظرة ش
             <Icon.Bell width="18" height="18"/>
             <span className="dot-notif"></span>
           </button>
-          <div className="userchip userchip-onblue">
-            <div className="avatar">ع.ع</div>
+          <div className="userchip userchip-onblue" style={{cursor: "pointer"}}>
+            <div className="avatar">
+              <img src="assets/avatar-placeholder.svg" alt=""/>
+              <span aria-hidden="true">ع.ع</span>
+            </div>
             <div className="userinfo">
               <div className="uname">عبدالله بن حمد العطية</div>
               <div className="urole">أمين عام · مجلس الوزراء</div>
